@@ -1,0 +1,39 @@
+services:
+  web:
+    build: 
+      context: .\setup\apache\
+      args:
+        - HTTPD_VERSION=${HTTPD_VERSION:-2.4.57}
+
+    container_name: httpd
+    volumes:
+      - .\public\:/usr/local/apache2/htdocs/
+    ports:
+      - "${HTTPD_HOST_SIDE_PORT:-8080}:80"
+    
+    depends_on:
+      - php
+      - db
+
+  php:
+    build:
+      context: .\setup\php\
+      args:
+        - PHP_VERSION=${PHP_VERSION:-8.2.7}
+    container_name: php
+    volumes:
+      - .\public\:/usr/local/apache2/htdocs/
+
+  db:
+    image: mariadb:${MARIADB_VERSION:-11.0.2}
+    container_name: mariadb
+    volumes:
+      - .\mounts\mariadb\:/var/lib/mysql
+    ports:
+      - "${MARIADB_PORT:-3306}:3306"
+    environment:
+      - MARIADB_ROOT_PASSWORD=${MARIADB_ROOT_PASSWORD:-rootpw}
+      - MARIADB_USER=${MARIADB_USER:-user}
+      - MARIADB_PASSWORD=${MARIADB_PASSWORD:-userpw}
+      - MARIADB_DATABASE=${MARIADB_DATABASE:-default}
+
