@@ -1,0 +1,8 @@
+services:
+  web:
+    image: httpd:${HTTPD_VERSION:-2.4.57}
+    container_name: httpd
+    volumes:
+      - .\public\:/usr/local/apache2/htdocs/
+    ports:
+      - "${HTTPD_HOST_SIDE_PORT:-8080}:80"
